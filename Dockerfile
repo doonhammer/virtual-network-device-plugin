@@ -1,7 +1,7 @@
-FROM centos:7
-USER root
+FROM centos
+#USER root
 
-MAINTAINER vichoudh@redhat.com
+MAINTAINER John McDowall <jmcdowall@paloaltonetworks.com>
 
 RUN yum install -y epel-release
 RUN yum install -y jq-devel.x86_64
@@ -16,11 +16,11 @@ ENV GOPATH /gopath
 ENV PATH $GOROOT/bin:$GOPATH/bin:$PATH
 
 # Define working directory.
-WORKDIR /gopath/src/sfc-dev-plugin
-
+WORKDIR /gopath/src/vnf-device-plugin
+COPY vnf /usr/local/bin/vnf
 COPY . .
-RUN go build -o sfc-nic-plugin
-RUN cp sfc-nic-plugin /usr/bin/sfc-nic-plugin \
+RUN go build -o vnf-device-plugin
+RUN cp vnf-device-plugin /usr/bin/vnf-device-plugin \
 && cp *.sh /usr/bin
 
 ENTRYPOINT ["/usr/sbin/init"]

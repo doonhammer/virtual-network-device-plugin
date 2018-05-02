@@ -17,7 +17,7 @@ go_binary(
 go_library(
     name = "go_default_library",
     srcs = [
-        "sfc_nic_plugin.go",
+        "vnf_device_plugin.go",
     ],
     tags = ["automanaged"],
     deps = [

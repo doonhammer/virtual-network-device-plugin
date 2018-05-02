@@ -1,21 +1,20 @@
----
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: configmap
 data:
-  onload-version: 201606-u1.3
-  reg-exp-sfc: (?m)[\r\n]+^.*SFC[6-9].*$
-  socket-name: sfcNIC
-  resource-name: solarflare/smartNIC
+  onload-version: "0.2"
+  socket-name: vnfNIC
+  resource-name: paloaltonetworks.com/vnfdevice
   k8s-api: http://127.0.0.1:8080
-  node-label-onload-version: device.sfc.onload-version
+  node-label-onload-version: device.vnf.onload-version
+  vnf-max-instances: "8"
 ---
 apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
-  name: sfc-device-plugin
-  namespace: kube-system
+  name: vnf-device-plugin
+  namespace: default
   labels:
     tier: node
 spec:
@@ -27,14 +26,10 @@ spec:
       hostNetwork: true
       nodeSelector:
         beta.kubernetes.io/arch: amd64
-      tolerations:
-      - key: node-role.kubernetes.io/master
-        operator: Exists
-        effect: NoSchedule
       containers:
-      - name: device-plugin-ctr
-        image: sfc-dev-plugin:latest
-        imagePullPolicy: Never
+      - name: vnfdevice
+        image: gcr.io/gcp-eng-dev/vnfdevice:0.0.1
+        imagePullPolicy: Always
         command: ["./start.sh"]
         env:
         - name: ONLOAD_VERSION
@@ -42,11 +37,6 @@ spec:
             configMapKeyRef:
               name: configmap
               key: onload-version
-        - name: REG_EXP_SFC
-          valueFrom:
-            configMapKeyRef:
-              name: configmap
-              key: reg-exp-sfc
         - name: SOCKET_NAME
           valueFrom:
             configMapKeyRef:
@@ -67,6 +57,11 @@ spec:
             configMapKeyRef:
               name: configmap
               key: node-label-onload-version
+        - name: VNF_MAX_INSTANCES
+          valueFrom:
+            configMapKeyRef:
+              name: configmap
+              key: vnf-max-instances
         volumeMounts:
           - mountPath: /gopath/run
             name: docker
@@ -78,6 +73,10 @@ spec:
             name: kubelet-socket
           - mountPath: "/etc/kubernetes/pki"
             name: pki
+          - name: varlog
+            mountPath: /var/log/vnf
+          - name: varrun
+            mountPath: /var/run/vnf
       volumes:
         - name: docker
           hostPath:
@@ -85,12 +84,18 @@ spec:
         - name: proc
           hostPath:
             path: /proc
-        - hostPath:
+        - name: ssh-key
+          hostPath:
             path: "/root/.ssh/id_rsa"
-          name: ssh-key
-        - hostPath:
+        - name: kubelet-socket
+          hostPath:
             path: "/var/lib/kubelet"
-          name: kubelet-socket
-        - hostPath:
+        - name: pki
+          hostPath:
             path: "/etc/kubernetes/pki"
-          name: pki
+        - name: varlog
+          hostPath:
+            path: /var/log/vnf
+        - name: varrun
+          hostPath:
+            path: /var/run/vnf
