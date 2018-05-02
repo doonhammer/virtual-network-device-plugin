@@ -1,0 +1,7 @@
+Godeps/**
+vendor/**
+vnf-device-plugin
+vnf
+Gopkg.lock
+Gopkg.toml
+
