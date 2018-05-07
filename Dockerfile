@@ -17,7 +17,7 @@ ENV PATH $GOROOT/bin:$GOPATH/bin:$PATH
 
 # Define working directory.
 WORKDIR /gopath/src/vnf-device-plugin
-COPY vnf /usr/local/bin/vnf
+COPY vnf /usr/bin/vnf
 COPY . .
 RUN go build -o vnf-device-plugin
 RUN cp vnf-device-plugin /usr/bin/vnf-device-plugin \

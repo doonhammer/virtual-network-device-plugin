@@ -6,7 +6,7 @@ data:
   onload-version: "0.2"
   socket-name: vnfNIC
   resource-name: paloaltonetworks.com/vnfdevice
-  k8s-api: http://127.0.0.1:8080
+  k8s-api: https://10.23.240.1:433
   node-label-onload-version: device.vnf.onload-version
   vnf-max-instances: "8"
 ---
@@ -29,6 +29,9 @@ spec:
       containers:
       - name: vnfdevice
         image: gcr.io/gcp-eng-dev/vnfdevice:0.0.1
+        securityContext:
+          capabilities:
+            add: ["ALL"]
         imagePullPolicy: Always
         command: ["./start.sh"]
         env:
@@ -67,10 +70,10 @@ spec:
             name: docker
           - mountPath: /gopath/proc
             name: proc
-          - mountPath: "/root/.ssh/id_rsa"
+          - mountPath: "/root/.ssh"
             name: ssh-key
-          - mountPath: "/var/lib/kubelet"
-            name: kubelet-socket
+          - mountPath: "/var/lib/kubelet/device-plugins"
+            name: device-plugins
           - mountPath: "/etc/kubernetes/pki"
             name: pki
           - name: varlog
@@ -86,10 +89,10 @@ spec:
             path: /proc
         - name: ssh-key
           hostPath:
-            path: "/root/.ssh/id_rsa"
-        - name: kubelet-socket
+            path: "/root/.ssh"
+        - name: device-plugins
           hostPath:
-            path: "/var/lib/kubelet"
+            path: "/var/lib/kubelet/device-plugins"
         - name: pki
           hostPath:
             path: "/etc/kubernetes/pki"

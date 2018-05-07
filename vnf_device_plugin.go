@@ -43,7 +43,7 @@ type vnfNICManager struct {
 func NewVNFNICManager() (*vnfNICManager, error) {
 	return &vnfNICManager{
 		devices:     make(map[string]*pluginapi.Device),
-		deviceFiles: []string{"/usr/local/bin/vnf"},
+		deviceFiles: []string{"/dev/zero"},
 	}, nil
 }
 
@@ -139,9 +139,14 @@ func (vnf *vnfNICManager) ListAndWatch(emtpy *pluginapi.Empty, stream pluginapi.
 }
 
 func (vnf *vnfNICManager) Allocate(ctx context.Context, rqt *pluginapi.AllocateRequest) (*pluginapi.AllocateResponse, error) {
-	glog.Info("Allocate")
+	var containerID string 
+	var containerPID bytes.Buffer
+	//
+	glog.Info("Allocate rqt: " + rqt + "\n")
+
 	resp := new(pluginapi.AllocateResponse)
-	//	containerName := strings.Join([]string{"k8s", "POD", rqt.PodName, rqt.Namespace}, "_")
+	//containerName := strings.Join([]string{"k8s", "POD", rqt.PodName, rqt.Namespace}, "_")
+	glog.Info("Container Name: " + containerName + "\n")
 	for _, id := range rqt.DevicesIDs {
 		if _, ok := vnf.devices[id]; ok {
 			for _, d := range vnf.deviceFiles {
@@ -153,14 +158,19 @@ func (vnf *vnfNICManager) Allocate(ctx context.Context, rqt *pluginapi.AllocateR
 			}
 			glog.Info("Allocated interface ", id)
 			//glog.Info("Allocate interface ", id, " to ", containerName)
-			go MoveInterface(id)
+			containerPID, _ = ExecCommand("docker", "-H unix:///gopath/run/docker.sock","inspect","--format","{{ .State.Pid }}", containerID)
+			MoveInterface(containerPID.String(),"eth0","crb0")
 		}
 	}
 	return resp, nil
 }
 
-func MoveInterface(interfaceName string) {
+func MoveInterface(containerPID string,interfaceName string, bridgeName string) {
+	var out bytes.Buffer
 	glog.Info("move interface after reading checkpoint file")
+	fmt.Printf("Moving Interface of ContainerPID: " + containerPID + "\n")
+	out,_ = ExecCommand("nsenter", "-t", containerPID, "-n", "ip", "netns","add", "nsvnf1")
+	fmt.Printf("Output of nsenter: "+out.String()+ "\n")
 }
 
 func AnnotateNodeWithOnloadVersion(version string) {
@@ -228,7 +238,7 @@ func main() {
 	// Starts device plugin service.
 	go func() {
 		defer wg.Done()
-		fmt.Printf("DveicePluginPath %s, pluginEndpoint %s\n", pluginapi.DevicePluginPath, pluginEndpoint)
+		fmt.Printf("DevicePluginPath %s, pluginEndpoint %s\n", pluginapi.DevicePluginPath, pluginEndpoint)
 		fmt.Printf("device-plugin start server at: %s\n", path.Join(pluginapi.DevicePluginPath, pluginEndpoint))
 		lis, err := net.Listen("unix", path.Join(pluginapi.DevicePluginPath, pluginEndpoint))
 		if err != nil {

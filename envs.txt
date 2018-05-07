@@ -1,7 +1,6 @@
 export ONLOAD_VERSION="0.2"
 export SOCKET_NAME="vnfNIC"
 export RESOURCE_NAME="paloaltonetworks.com/vnfdevice"
-export K8S_API="https://localhost:6443"
+export K8S_API="https://10.23.240.1:443"
 export NODE_LABEL_ONLOAD_VERSION="device.vnf.onload-version"
 export VNF_MAX_INSTANCES="vnf-max-instances"
-
