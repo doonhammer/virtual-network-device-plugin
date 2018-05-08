@@ -16,12 +16,13 @@ spec:
           add: ["ALL"]
       resources:
         limits:
-          cpu: "2000m"
-          memory: "1024Mi"
+          cpu: "200m"
+          memory: "512Mi"
           paloaltonetworks.com/vnfdevice: '1'
         requests:
           cpu: "100m"
           memory: "256Mi"
+          paloaltonetworks.com/vnfdevice: '1'
       volumeMounts:
         - name: varlog
           mountPath: /var/log/vnf

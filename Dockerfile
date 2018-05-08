@@ -6,7 +6,7 @@ MAINTAINER John McDowall <jmcdowall@paloaltonetworks.com>
 RUN yum install -y epel-release
 RUN yum install -y jq-devel.x86_64
 
-RUN yum install -y net-tools make which rsync lshw docker-client openssh-clients libcurl.i686
+RUN yum install -y net-tools make which rsync lshw docker-client openssh-clients libcurl.i686 iproute
 RUN \
   mkdir -p /goroot && \
   curl https://storage.googleapis.com/golang/go1.9.linux-amd64.tar.gz | tar xvzf - -C /goroot --strip-components=1

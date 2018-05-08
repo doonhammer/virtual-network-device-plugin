@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"os/exec"
 	//"syscall"
+	"strings"
 	"flag"
 	"fmt"
 	"github.com/golang/glog"
@@ -31,7 +32,8 @@ var socketName string   //= "vnfNIC"
 var resourceName string //= "pod.alpha.kubernetes.io/opaque-int-resource-vnfNIC"
 var k8sAPI string
 var nodeLabelVersion string
-var vnfMaxInstances int 	// = 4
+var vnfMaxInstances int 	// = 8
+var k8SPasswd string
 
 //)
 // vnfNICManager manages virtual network function devices
@@ -68,7 +70,7 @@ func (vnf *vnfNICManager) discoverVNFResources(vnfMaxInstances int) bool {
 	found := true
 	for i:=0; i< vnfMaxInstances; i++ {
 		//vnf.devices["firewall-"+string(i)] = i
-		vnfName = "firewall-" + strconv.Itoa(i)
+		vnfName = "vnf-" + strconv.Itoa(i)
 		dev := pluginapi.Device{ID: vnfName, Health: pluginapi.Healthy}
 		vnf.devices[vnfName] = &dev
 		found = true
@@ -117,7 +119,7 @@ func Register(kubeletEndpoint string, pluginEndpoint, socketName string) error {
 }
 
 // Implements DevicePlugin service functions
-func (vnf *vnfNICManager) ListAndWatch(emtpy *pluginapi.Empty, stream pluginapi.DevicePlugin_ListAndWatchServer) error {
+func (vnf *vnfNICManager) ListAndWatch(empty *pluginapi.Empty, stream pluginapi.DevicePlugin_ListAndWatchServer) error {
 	glog.Info("device-plugin: ListAndWatch start\n")
 	for {
 		vnf.discoverVNFResources(vnfMaxInstances)
@@ -126,10 +128,10 @@ func (vnf *vnfNICManager) ListAndWatch(emtpy *pluginapi.Empty, stream pluginapi.
 		}
 		resp := new(pluginapi.ListAndWatchResponse)
 		for _, dev := range vnf.devices {
-			glog.Info("dev ", dev)
+			//glog.Info("dev ", dev)
 			resp.Devices = append(resp.Devices, dev)
 		}
-		glog.Info("resp.Devices ", resp.Devices)
+		//glog.Info("resp.Devices ", resp.Devices)
 		if err := stream.Send(resp); err != nil {
 			glog.Errorf("Failed to send response to kubelet: %v\n", err)
 		}
@@ -139,14 +141,14 @@ func (vnf *vnfNICManager) ListAndWatch(emtpy *pluginapi.Empty, stream pluginapi.
 }
 
 func (vnf *vnfNICManager) Allocate(ctx context.Context, rqt *pluginapi.AllocateRequest) (*pluginapi.AllocateResponse, error) {
-	var containerID string 
-	var containerPID bytes.Buffer
+	//var containerID string 
+	//var containerPID bytes.Buffer
 	//
-	glog.Info("Allocate rqt: " + rqt + "\n")
+	glog.Info("Allocate\n")
 
 	resp := new(pluginapi.AllocateResponse)
 	//containerName := strings.Join([]string{"k8s", "POD", rqt.PodName, rqt.Namespace}, "_")
-	glog.Info("Container Name: " + containerName + "\n")
+	//glog.Info("Container Name: " + containerName + "\n")
 	for _, id := range rqt.DevicesIDs {
 		if _, ok := vnf.devices[id]; ok {
 			for _, d := range vnf.deviceFiles {
@@ -157,20 +159,32 @@ func (vnf *vnfNICManager) Allocate(ctx context.Context, rqt *pluginapi.AllocateR
 				})
 			}
 			glog.Info("Allocated interface ", id)
-			//glog.Info("Allocate interface ", id, " to ", containerName)
-			containerPID, _ = ExecCommand("docker", "-H unix:///gopath/run/docker.sock","inspect","--format","{{ .State.Pid }}", containerID)
-			MoveInterface(containerPID.String(),"eth0","crb0")
+			go MoveInterface(id)
 		}
 	}
 	return resp, nil
 }
 
-func MoveInterface(containerPID string,interfaceName string, bridgeName string) {
-	var out bytes.Buffer
-	glog.Info("move interface after reading checkpoint file")
-	fmt.Printf("Moving Interface of ContainerPID: " + containerPID + "\n")
-	out,_ = ExecCommand("nsenter", "-t", containerPID, "-n", "ip", "netns","add", "nsvnf1")
-	fmt.Printf("Output of nsenter: "+out.String()+ "\n")
+func MoveInterface(id string) {
+	//var cpid bytes.Buffer
+	var containerPID string
+	glog.Info("move interface after reading checkpoint file: ", id, " K8sAPI: ", k8sAPI )
+	cpid, err := ExecCommand("/usr/bin/get_container_pid.sh", id, k8sAPI, k8SPasswd)
+	if err != nil {
+		glog.Error(err)
+	}
+	containerPID = strings.TrimSuffix(cpid.String(), "\n")
+	glog.Info("Container PID: " , containerPID , "\n")
+
+	out, err := ExecCommand("nsenter", "-t", containerPID, "-n", "ip", "netns","add", "nsvnf1")
+	if err != nil {
+		glog.Error(err)
+	}
+	out, err = ExecCommand("nsenter", "-t", containerPID, "-n","ip", "addr", "show")
+	if err != nil {
+		glog.Error(err)
+	}
+	glog.Info("Output of ip addr show: ", out.String(), "\n")
 }
 
 func AnnotateNodeWithOnloadVersion(version string) {
@@ -203,7 +217,7 @@ func main() {
         glog.Info(err)
         vnfMaxInstances = 4
     }
-
+    k8SPasswd = os.Args[7]
 	flag.Lookup("logtostderr").Value.Set("true")
 
 	vnf, err := NewVNFNICManager()
