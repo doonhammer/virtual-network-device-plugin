@@ -84,5 +84,6 @@ data:
 1. Only possible to get container ID in Allocate method through a workaround.
 2. Deallocating resources when a POD is deleted is an issue.
 
-## More Details:
-    [Virtual Network Device Plugin](https://docs.google.com/document/d/1_weY_f6j4et56mCZGhbXfCiwvyWxFIwUKl4R0fc1F5c/edit#heading=h.d463l2cyl7wb). 
+## References:
+
+1.[Virtual Network Device Plugin](https://docs.google.com/document/d/1_weY_f6j4et56mCZGhbXfCiwvyWxFIwUKl4R0fc1F5c/edit#heading=h.d463l2cyl7wb). 
