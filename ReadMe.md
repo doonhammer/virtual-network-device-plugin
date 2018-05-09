@@ -1,11 +1,12 @@
-# Solarflare Device Plugin
----------------------------
-https://asciinema.org/a/UyzMDcSHB42eWrP0soiwPyhEM
+# Virtual Network Device Plugin
+--------------------------------
 
-### Steps to deploy
-    $ git clone this repo
-    $ cd sfc-device-plugin
-    $ docker build -t sfc-dev-plugin .
+## Overview
+The is a fork of the sample [Solarwind Device Plugin Repository](https://github.com/vikaschoudhary16/sfc-device-plugin).
+
+The goal of this sample is to demonstrate the ability of inserting a Virtual Network Function (VNF) into the network path
+for any Kubernetes POD using standard Kubernetes mechanisms.
+    
  Adjust the config map parameters for onload configuration:
 
     $ cat device_plugins/sfc_nic/device_plugin.yml
@@ -36,7 +37,7 @@ https://asciinema.org/a/UyzMDcSHB42eWrP0soiwPyhEM
     "pods": "110"
     }
 
-### sample pod template to consume SFC NICs
+## sample pod template to consume VNFs
     apiVersion: v1
     kind: Pod
     metadata:
@@ -50,9 +51,13 @@ https://asciinema.org/a/UyzMDcSHB42eWrP0soiwPyhEM
         imagePullPolicy: Never
         resources:
             requests:
-                solarflare/smartNIC: '1'
+                paloaltonetworks.com/vnf: '1'
             limits:
-                solarflare/smartNIC: '1'
+                paloaltonetworks.com/vnf: '1'
 
-### More Details:
-    https://docs.google.com/document/d/18lX8aqoQhB8vBlupo0nfxgh-49EeMU8bTlHioFjEg-c/edit#heading=h.6ef835v63927
+## Current Issues
+1. Only possible to get container ID in Allocate method through a workaround.
+2. Deallocating resources when a POD is deleted is an issue.
+
+## More Details:
+    [Virtual Network Device Plugin](https://docs.google.com/document/d/1_weY_f6j4et56mCZGhbXfCiwvyWxFIwUKl4R0fc1F5c/edit#heading=h.d463l2cyl7wb)
