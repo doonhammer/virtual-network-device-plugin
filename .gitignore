@@ -4,4 +4,4 @@ vnf-device-plugin
 vnf
 Gopkg.lock
 Gopkg.toml
-
+_vendor-*/**
