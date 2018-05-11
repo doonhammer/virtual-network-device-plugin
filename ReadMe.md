@@ -22,9 +22,9 @@ This sample code has been deployed successfully on GKE with Kubernetes v1.9.7. I
 
 ```bash
 
-  $  gcloud alpha container clusters create vnf-demo
-      --enable=kubernetes-alpha \
-      --cluster-version 1.9.7
+gcloud alpha container clusters create vnf-demo
+  --enable=kubernetes-alpha \
+  --cluster-version 1.9.7
 
 ``` 
 
@@ -44,25 +44,21 @@ data:
   node-label-onload-version: device.vnf.onload-version
   vnf-max-instances: "8"
   k8s-passwd: iyJ3gmowug63Zm0q
+
 ```
 
-3. Deloy the device plugin daemonset:
+3. Deploy the device plugin daemonset:
 
-    $ kubectl apply -f device-plugin.yml -n kube-system
+```bash
 
-4.
+    $ kubectl apply -f ./device-plugin.yaml -n kube-system
 
-### Verify if NICs got picked up by plugin and reported fine to kubelet
+```
 
-    [root@dell-r620-01 kubernetes]# kubectl get nodes -o json | jq     '.items[0].status.capacity'
-    {
-    "cpu": "16",
-    "memory": "131816568Ki",
-    "solarflare/smartNIC": "2",
-    "pods": "110"
-    }
+4.Sample pod template to consume VNFs
 
-## sample pod template to consume VNFs
+```yaml
+
     apiVersion: v1
     kind: Pod
     metadata:
@@ -80,9 +76,18 @@ data:
             limits:
                 paloaltonetworks.com/vnf: '1'
 
+```
+
+```bash
+
+  $ kubectl apply -f ./helloworld.yaml
+
+'''
+
 ## Current Issues
 1. Only possible to get container ID in Allocate method through a workaround.
 2. Deallocating resources when a POD is deleted is an issue.
+3. Getting an addition interface into the VNF for management. This may be possible using another veth pair and a local IP-Tables rule on a well known port.
 
 ## References:
 
