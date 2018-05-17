@@ -9,7 +9,7 @@ data:
   k8s-api: https://10.11.240.1
   node-label-onload-version: device.vnf.onload-version
   vnf-max-instances: "8"
-  k8s-passwd: iyJ3gmowug63Zm0q
+  k8s-passwd: xxxxxxxx
 ---
 apiVersion: extensions/v1beta1
 kind: DaemonSet
