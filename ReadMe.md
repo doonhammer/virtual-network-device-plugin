@@ -47,13 +47,17 @@ data:
 
 ```
 
+3. Get a sample CNF ]
+
+  see [Cloud Network Function](https://github.com/doonhammer/Cloud-Network-Function)
+
 3. Build the device plugin
 
 ```bash
 $ dep init
 $ dep ensure
 $ go build -o vnf-device-plugin
-$ cp <location of VNF> ./vnf
+$ cp <location of CNF> ./vnf
 $ sudo docker build -t gcr.io/<your account>/vnfdevice:0.0.1 .
 $ gcloud docker -- push gcr.io/<your account>/vnfdevice:0.0.1
 ```
