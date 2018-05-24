@@ -14,11 +14,11 @@ document is open for comments/
 
 This sample code has been deployed successfully on GKE with Kubernetes v1.9.6 (Note there appears to be some issues on 1.9.7). It has not been deployed on any other public or private cloud infrastructure. There should not be any issues on other clouds as the implmentation uses standard (though Alpha) Kubernetes features.
 
-1.Initial Setup of GKE
-    1.Assume user has GKE account.
-    2.Assume gcloud is installed.
+1. Initial Setup of GKE
+    1. Assume user has GKE account.
+    2. Assume gcloud is installed.
 
-2.Configuring the Kubernetes Cluster
+2. Configuring the Kubernetes Cluster
 
 ```bash
 
@@ -30,7 +30,7 @@ $ gcloud alpha container clusters create vnf-demo \
 
 ``` 
 
-3.Edit the configMap in the device-plugin.yaml file
+3. Edit the configMap in the device-plugin.yaml file
 
 ```yaml
 
@@ -49,11 +49,11 @@ data:
 
 ```
 
-4.Get a sample CNF
+4. Get a sample CNF
 
   see [Cloud Network Function](https://github.com/doonhammer/Cloud-Network-Function)
 
-3.Build the device plugin
+3. Build the device plugin
 
 ```bash
 $ dep init
@@ -69,7 +69,7 @@ $ gcloud docker -- push gcr.io/<your account>/vnfdevice:0.0.1
 $ kubectl apply -f ./device-plugin.yaml
 ```
 
-5.Sample pod template to consume VNFs
+5. Sample pod template to consume VNFs
 
 ```yaml
 
@@ -89,18 +89,18 @@ spec:
 
 ```
 
-6.Deploy the sample POD 
+6. Deploy the sample POD 
 ```bash
 
   $ kubectl apply -f ./nginx.yaml
 ```
 
-7.Get the URL
+7. Get the URL
 ```bash
 $ curl http://<nginx pod>
 ```
 
-8.Check the logs for the VNF
+8. Check the logs for the VNF
 ```bash
 $ kubectl exec -it <daemonset POD> -- /bin/bash
 $ cat /var/log/vnf/vnf.log
