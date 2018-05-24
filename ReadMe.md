@@ -12,23 +12,23 @@ document is open for comments/
 
 ## Deployment
 
-This sample code has been deployed successfully on GKE with Kubernetes v1.9.7. It has not been deployed on any other public or private cloud infrastructure. There should not be any issues on other clouds as the implmentation uses standard (though Alpha) Kubernetes features.
+This sample code has been deployed successfully on GKE with Kubernetes v1.9.6 (Note there appears to be some issues on 1.9.7). It has not been deployed on any other public or private cloud infrastructure. There should not be any issues on other clouds as the implmentation uses standard (though Alpha) Kubernetes features.
 
-1. Initial Setup of GKE
-  1. Assume use has GKE account
-  1. Install gcloud
+1.Initial Setup of GKE
+  1.Assume user has GKE account.
+  2.Assume gcloud is installed.
 
-1. Configuring the Kubernetes Cluster
+2.Configuring the Kubernetes Cluster
 
 ```bash
 
-gcloud alpha container clusters create vnf-demo
+$ gcloud alpha container clusters create vnf-demo
   --enable=kubernetes-alpha \
-  --cluster-version 1.9.7
+  --cluster-version 1.9.6
 
 ``` 
 
-2. Edit the configMap in the device-plugin.yaml file
+3.Edit the configMap in the device-plugin.yaml file
 
 ```yaml
 
@@ -47,7 +47,7 @@ data:
 
 ```
 
-3. Get a sample CNF ]
+4.Get a sample CNF
 
   see [Cloud Network Function](https://github.com/doonhammer/Cloud-Network-Function)
 
