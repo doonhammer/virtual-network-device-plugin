@@ -51,9 +51,9 @@ data:
 
 4. Get a sample CNF
 
-  see [Cloud Network Function](https://github.com/doonhammer/Cloud-Network-Function)
+see [Cloud Network Function](https://github.com/doonhammer/Cloud-Network-Function)
 
-3. Build the device plugin
+5. Build the device plugin
 
 ```bash
 $ dep init
@@ -63,13 +63,13 @@ $ cp <location of CNF> ./vnf
 $ sudo docker build -t gcr.io/<your account>/vnfdevice:0.0.1 .
 $ gcloud docker -- push gcr.io/<your account>/vnfdevice:0.0.1
 ```
-4.Deploy the device plugin daemonset:
+6. Deploy the device plugin daemonset:
 
 ```bash
 $ kubectl apply -f ./device-plugin.yaml
 ```
 
-5. Sample pod template to consume VNFs
+7. Sample pod template to consume VNFs
 
 ```yaml
 
@@ -89,18 +89,18 @@ spec:
 
 ```
 
-6. Deploy the sample POD 
+8. Deploy the sample POD 
 ```bash
 
   $ kubectl apply -f ./nginx.yaml
 ```
 
-7. Get the URL
+9. Get the URL
 ```bash
 $ curl http://<nginx pod>
 ```
 
-8. Check the logs for the VNF
+10. Check the logs for the VNF
 ```bash
 $ kubectl exec -it <daemonset POD> -- /bin/bash
 $ cat /var/log/vnf/vnf.log
