@@ -15,8 +15,8 @@ document is open for comments/
 This sample code has been deployed successfully on GKE with Kubernetes v1.9.6 (Note there appears to be some issues on 1.9.7). It has not been deployed on any other public or private cloud infrastructure. There should not be any issues on other clouds as the implmentation uses standard (though Alpha) Kubernetes features.
 
 1.Initial Setup of GKE
-  1.Assume user has GKE account.
-  2.Assume gcloud is installed.
+    1.Assume user has GKE account.
+    2.Assume gcloud is installed.
 
 2.Configuring the Kubernetes Cluster
 
