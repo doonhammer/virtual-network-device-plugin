@@ -22,9 +22,11 @@ This sample code has been deployed successfully on GKE with Kubernetes v1.9.6 (N
 
 ```bash
 
-$ gcloud alpha container clusters create vnf-demo
+$ gcloud alpha container clusters create vnf-demo \
   --enable=kubernetes-alpha \
-  --cluster-version 1.9.6
+  --image-type "UBUNTU" \
+  --enable-legacy-authorization \
+  --cluster-version 1.9.6-gke.1
 
 ``` 
 
@@ -64,9 +66,7 @@ $ gcloud docker -- push gcr.io/<your account>/vnfdevice:0.0.1
 4.Deploy the device plugin daemonset:
 
 ```bash
-
-    $ kubectl apply -f ./device-plugin.yaml
-
+$ kubectl apply -f ./device-plugin.yaml
 ```
 
 5.Sample pod template to consume VNFs
