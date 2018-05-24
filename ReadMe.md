@@ -1,4 +1,4 @@
-# Virtual Network Device Plugin
+# Cloud Network Device Plugin
 --------------------------------
 
 ## Overview
@@ -47,7 +47,17 @@ data:
 
 ```
 
-3. Deploy the device plugin daemonset:
+3. Build the device plugin
+
+```bash
+$ dep init
+$ dep ensure
+$ go build -o vnf-device-plugin
+$ cp <location of VNF> ./vnf
+$ sudo docker build -t gcr.io/<your account>/vnfdevice:0.0.1 .
+$ gcloud docker -- push gcr.io/<your account>/vnfdevice:0.0.1
+```
+4. Deploy the device plugin daemonset:
 
 ```bash
 
@@ -55,7 +65,7 @@ data:
 
 ```
 
-4.Sample pod template to consume VNFs
+5.Sample pod template to consume VNFs
 
 ```yaml
 
