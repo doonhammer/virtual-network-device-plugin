@@ -6,10 +6,10 @@ data:
   onload-version: "0.2"
   socket-name: vnfNIC
   resource-name: paloaltonetworks.com/vnfdevice
-  k8s-api: https://10.11.240.1
+  k8s-api: https://10.51.240.1
   node-label-onload-version: device.vnf.onload-version
   vnf-max-instances: "8"
-  k8s-passwd: xxxxxxxx
+  k8s-passwd: gBz0LT3GPkIoArNe
 ---
 apiVersion: extensions/v1beta1
 kind: DaemonSet
@@ -32,11 +32,11 @@ spec:
       containers:
       - name: vnfdevice
         image: gcr.io/gcp-eng-dev/vnfdevice:0.0.1
+        imagePullPolicy: Always
         securityContext:
           privileged: true
           capabilities:
             add: ["ALL"]
-        imagePullPolicy: Always
         command: ["./start.sh"]
         env:
         - name: ONLOAD_VERSION

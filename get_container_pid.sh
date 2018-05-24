@@ -8,6 +8,8 @@ eval POD_UID=`cat /var/lib/kubelet/device-plugins/kubelet_internal_checkpoint | 
 
 eval POD_NAME=$(curl --insecure --user admin:$PASSWD $K8S_API/api/v1/pods/ | jq -r --arg POD_UID $POD_UID '.items[].metadata | select(.uid == $POD_UID) | .name')
 eval POD_NAMESPACE=$(curl --insecure --user admin:$PASSWD $K8S_API/api/v1/pods/ | jq -r --arg POD_UID $POD_UID '.items[].metadata | select(.uid == $POD_UID) | .namespace')
+#eval POD_NAME=$(curl  $K8S_API/api/v1/pods/ | jq -r --arg POD_UID $POD_UID '.items[].metadata | select(.uid == $POD_UID) | .name')
+#eval POD_NAMESPACE=$(curl $K8S_API/api/v1/pods/ | jq -r --arg POD_UID $POD_UID '.items[].metadata | select(.uid == $POD_UID) | .namespace')
 containerName="k8s_POD_${POD_NAME}_${POD_NAMESPACE}"
 #
 #echo $containerName

@@ -23,8 +23,8 @@ import (
 	"google.golang.org/grpc"
 
 	pluginapi "k8s.io/kubernetes/pkg/kubelet/apis/deviceplugin/v1alpha"
-        "github.com/vishvananda/netlink"
-        "github.com/vishvananda/netns"
+    "github.com/vishvananda/netlink"
+    "github.com/vishvananda/netns"
 )
 
 //const (
@@ -76,7 +76,7 @@ func (vnf *vnfNICManager) discoverVNFResources(vnfMaxInstances int) bool {
 		dev := pluginapi.Device{ID: vnfName, Health: pluginapi.Healthy}
 		vnf.devices[vnfName] = &dev
 		found = true
-		fmt.Printf("Devices: %v \n", vnf.devices)
+		//fmt.Printf("Devices: %v \n", vnf.devices)
 	}
 	return found
 }
@@ -122,7 +122,7 @@ func Register(kubeletEndpoint string, pluginEndpoint, socketName string) error {
 
 // Implements DevicePlugin service functions
 func (vnf *vnfNICManager) ListAndWatch(empty *pluginapi.Empty, stream pluginapi.DevicePlugin_ListAndWatchServer) error {
-	glog.Info("device-plugin: ListAndWatch start\n")
+	//glog.Info("device-plugin: ListAndWatch start\n")
 	for {
 		vnf.discoverVNFResources(vnfMaxInstances)
 		if !vnf.isOnloadInstallHealthy() {
@@ -480,12 +480,13 @@ func main() {
 	k8sAPI = os.Args[4]
 	nodeLabelVersion = os.Args[5]
 	//vnfMaxInstances = os.Args[6]
-   	vnfMaxInstances, err := strconv.Atoi(os.Args[6])
+   	instanceNumber, err := strconv.Atoi(os.Args[6])
     if err != nil {
         // handle error
         glog.Info(err)
         vnfMaxInstances = 4
     }
+    vnfMaxInstances  = instanceNumber
     k8SPasswd = os.Args[7]
 	flag.Lookup("logtostderr").Value.Set("true")
 
