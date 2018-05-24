@@ -40,10 +40,10 @@ data:
   onload-version: "0.2"
   socket-name: vnfNIC
   resource-name: paloaltonetworks.com/vnfdevice
-  k8s-api: https://10.11.240.1
+  k8s-api: https://<ClusterIP>
   node-label-onload-version: device.vnf.onload-version
   vnf-max-instances: "8"
-  k8s-passwd: iyJ3gmowug63Zm0q
+  k8s-passwd: <cluster credentials password>
 
 ```
 
@@ -51,7 +51,7 @@ data:
 
 ```bash
 
-    $ kubectl apply -f ./device-plugin.yaml -n kube-system
+    $ kubectl apply -f ./device-plugin.yaml
 
 ```
 
@@ -59,28 +59,25 @@ data:
 
 ```yaml
 
-    apiVersion: v1
-    kind: Pod
-    metadata:
-      name: my.pod1
-      annotations:
-        sfc-nic-ip: 70.70.70.1/24
-    spec:
-        containers:
-        - name: demo1
-        image: sfc-dev-plugin:latest
-        imagePullPolicy: Never
-        resources:
-            requests:
-                paloaltonetworks.com/vnf: '1'
-            limits:
-                paloaltonetworks.com/vnf: '1'
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginxtwin
+  labels:
+    name: webserver
+spec:
+  containers:
+  - name: nginxtwin
+    image: nginx
+    resources:
+      limits:
+        paloaltonetworks.com/vnfdevice: '1'
 
 ```
 
 ```bash
 
-  $ kubectl apply -f ./helloworld.yaml
+  $ kubectl apply -f ./nginx.yaml
 
 '''
 

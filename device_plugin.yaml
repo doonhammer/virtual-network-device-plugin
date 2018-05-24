@@ -6,10 +6,10 @@ data:
   onload-version: "0.2"
   socket-name: vnfNIC
   resource-name: paloaltonetworks.com/vnfdevice
-  k8s-api: https://10.51.240.1
+  k8s-api: https://<ClusterIP>
   node-label-onload-version: device.vnf.onload-version
   vnf-max-instances: "8"
-  k8s-passwd: gBz0LT3GPkIoArNe
+  k8s-passwd: <cluster credentials password>
 ---
 apiVersion: extensions/v1beta1
 kind: DaemonSet
@@ -79,12 +79,8 @@ spec:
             name: docker
           - mountPath: /gopath/proc
             name: proc
-          - mountPath: "/root/.ssh"
-            name: ssh-key
           - mountPath: "/var/lib/kubelet/device-plugins"
             name: device-plugins
-          - mountPath: "/etc/kubernetes/pki"
-            name: pki
           - name: varlog
             mountPath: /var/log/vnf
           - name: varrun
@@ -96,15 +92,9 @@ spec:
         - name: proc
           hostPath:
             path: /proc
-        - name: ssh-key
-          hostPath:
-            path: "/root/.ssh"
         - name: device-plugins
           hostPath:
             path: "/var/lib/kubelet/device-plugins"
-        - name: pki
-          hostPath:
-            path: "/etc/kubernetes/pki"
         - name: varlog
           hostPath:
             path: /var/log/vnf
