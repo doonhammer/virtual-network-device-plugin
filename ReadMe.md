@@ -51,7 +51,7 @@ data:
 
   see [Cloud Network Function](https://github.com/doonhammer/Cloud-Network-Function)
 
-3. Build the device plugin
+3.Build the device plugin
 
 ```bash
 $ dep init
@@ -61,7 +61,7 @@ $ cp <location of CNF> ./vnf
 $ sudo docker build -t gcr.io/<your account>/vnfdevice:0.0.1 .
 $ gcloud docker -- push gcr.io/<your account>/vnfdevice:0.0.1
 ```
-4. Deploy the device plugin daemonset:
+4.Deploy the device plugin daemonset:
 
 ```bash
 
@@ -89,11 +89,23 @@ spec:
 
 ```
 
+6.Deploy the sample POD 
 ```bash
 
   $ kubectl apply -f ./nginx.yaml
+```
 
-'''
+7.Get the URL
+```bash
+$ curl http://<nginx pod>
+```
+
+8.Check the logs for the VNF
+```bash
+$ kubectl exec -it <daemonset POD> -- /bin/bash
+$ cat /var/log/vnf/vnf.log
+```
+In the logs you will see the TCP packets from the hot running the curl command.
 
 ## Current Issues
 1. Only possible to get container ID in Allocate method through a workaround.
@@ -102,4 +114,4 @@ spec:
 
 ## References:
 
-1.[Virtual Network Device Plugin](https://docs.google.com/document/d/1_weY_f6j4et56mCZGhbXfCiwvyWxFIwUKl4R0fc1F5c/edit#heading=h.d463l2cyl7wb). 
+1.[Cloud Network Device Plugin](https://docs.google.com/document/d/1_weY_f6j4et56mCZGhbXfCiwvyWxFIwUKl4R0fc1F5c/edit#heading=h.d463l2cyl7wb). 
